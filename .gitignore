@@ -1,0 +1,11 @@
+node_modules
+cache
+artifacts
+.terraform
+.env
+.aws-sam
+build
+dist
+.idea
+.vscode
+/*/coverage/
