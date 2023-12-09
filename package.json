@@ -1,20 +1,26 @@
 {
-    "name": "@pok/logging",
-    "private": true,
-    "version": "0.0.1",
-    "scripts": {
-        "compile": "tsc",
-        "clean": "rm -rf dist",
-        "predistclean": "npm run clean",
-        "distclean": "rm -rf node_modules"
-    },
-    "dependencies": {
-        "pino": "8.11.0",
-        "pino-caller": "3.4.0",
-        "pino-lambda": "4.1.0",
-        "pino-pretty": "10.0.0",
-        "@types/node": "^20.6.3"
-    },
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts"
+  "name": "@yopdev/logging",
+  "version": "0.0.1",
+  "scripts": {
+    "compile": "tsc",
+    "clean": "rm -rf dist",
+    "predistclean": "npm run clean",
+    "distclean": "rm -rf node_modules"
+  },
+  "dependencies": {
+    "pino": "8.11.0",
+    "pino-caller": "3.4.0",
+    "pino-lambda": "4.1.0",
+    "pino-pretty": "10.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github:blockademy/logging-lib"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "devDependencies": {
+    "@types/node": "^20.6.3",
+    "typescript": "^5.3.3"
+  }
 }
