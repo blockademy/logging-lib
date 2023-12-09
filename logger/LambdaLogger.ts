@@ -1,4 +1,4 @@
-import {lambdaRequestTracker} from 'pino-lambda';
+import { lambdaRequestTracker } from 'pino-lambda';
 
 export class LambdaLogger {
     static tracker = lambdaRequestTracker({});

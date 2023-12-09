@@ -1,6 +1,6 @@
-import {Logger as PinoLoggerImpl, pino} from 'pino';
-import {pinoLambdaDestination} from 'pino-lambda';
-import {pinoCaller} from 'pino-caller';
+import { Logger as PinoLoggerImpl, pino } from 'pino';
+import { pinoLambdaDestination } from 'pino-lambda';
+import { pinoCaller } from 'pino-caller';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface Logger {
@@ -18,7 +18,7 @@ export interface Logger {
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 class PinoLogger implements Logger {
-    constructor(readonly pinoLogger: PinoLoggerImpl) {}
+    constructor(readonly pinoLogger: PinoLoggerImpl) { }
 
     trace<T>(obj?: T, msg?: string, ...args: any[]): void {
         this.pinoLogger.trace(obj, msg, ...args);

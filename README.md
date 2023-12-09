@@ -10,14 +10,14 @@ This module implements a logging library used on all PoK services and internal l
 
 ```typescript
 export interface Logger {
-    debug(msg?: string, ...args: any[]): void;
-    debug<T>(obj?: T, msg?: string, ...args: any[]): void;
-    info(msg?: string, ...args: any[]): void;
-    info<T>(obj?: T, msg?: string, ...args: any[]): void;
-    warn(msg?: string, ...args: any[]): void;
-    warn<T>(obj?: T, msg?: string, ...args: any[]): void;
-    error(msg?: string, ...args: any[]): void;
-    error<T>(obj?: T, msg?: string, ...args: any[]): void;
+  debug(msg?: string, ...args: any[]): void;
+  debug<T>(obj?: T, msg?: string, ...args: any[]): void;
+  info(msg?: string, ...args: any[]): void;
+  info<T>(obj?: T, msg?: string, ...args: any[]): void;
+  warn(msg?: string, ...args: any[]): void;
+  warn<T>(obj?: T, msg?: string, ...args: any[]): void;
+  error(msg?: string, ...args: any[]): void;
+  error<T>(obj?: T, msg?: string, ...args: any[]): void;
 }
 ```
 
@@ -26,7 +26,7 @@ export interface Logger {
 1. Import the logging package
 
 ```typescript
-import { LoggerFactory } from '@pok/logging';
+import { LoggerFactory } from "@yopdev/logging";
 ```
 
 2. Create a new `Logger` instance (ideally private to the component you'll be logging from)
@@ -38,7 +38,7 @@ import { LoggerFactory } from '@pok/logging';
 3. Log stuff
 
 ```typescript
-    this.logger.info('Logging stuff will take you places, %s', name);
+this.logger.info("Logging stuff will take you places, %s", name);
 ```
 
 ## Settings via env-vars
@@ -47,7 +47,7 @@ import { LoggerFactory } from '@pok/logging';
 - `LOG_TRANSPORT`: `pretty` is only supported for now. Uses the stdOut and colorizes output with a simple formatter. Enabled when running with `NODE_ENV === development`
 - `LOG_CALLER`: Enables caller information in logs. Also enabled when running with `NODE_ENV === development`.
 
-**WARNING:**: There are no settings available to alter how we log in production. Prod-mode is our default logging strategy. Don't add these settings to production or pre-production environments as they will incurr in additional costs. 
+**WARNING:**: There are no settings available to alter how we log in production. Prod-mode is our default logging strategy. Don't add these settings to production or pre-production environments as they will incurr in additional costs.
 
 ## Best practices
 
@@ -59,8 +59,9 @@ import { LoggerFactory } from '@pok/logging';
 ```
 
 - Choose the proper logging level.
-  - Don't do INFO unless you're certain it's something you want logged every time in production. 
-  - Use WARN for potential errors, like things that you want to inform to the operations team but aren't necesarily errors. 
+
+  - Don't do INFO unless you're certain it's something you want logged every time in production.
+  - Use WARN for potential errors, like things that you want to inform to the operations team but aren't necesarily errors.
   - Use ERROR for real errors. Make sure you're sending the Error object first! No need to use templates/interpolation, keep it clean.
 
 - Send the right parameters the the logger (see Logging methods)
@@ -70,10 +71,13 @@ import { LoggerFactory } from '@pok/logging';
 ### Templated string
 
 Will log a string from a templated string (aka string.format).
-  
-  ```typescript
-    this.logger.info('a string %s, a number %d, an object %O', 'one', 2, { "one": 2, "three": "four" })
-  ```
+
+```typescript
+this.logger.info("a string %s, a number %d, an object %O", "one", 2, {
+  one: 2,
+  three: "four",
+});
+```
 
 **NOTE:** You can still log serialized objects using one of `%j`, `%o` or `%O` placeholders, but keep in mind these will take a hit on performance and costs in production.
 
@@ -98,7 +102,7 @@ Will log a string from a templated string (aka string.format).
 Will log the same templated message, but will merge the given object into the resulting log NDJSON record.
 
 ```typescript
-    this.logger.info(authInfo, 'User %s logged in succesfully', authInfo.username)
+this.logger.info(authInfo, "User %s logged in succesfully", authInfo.username);
 ```
 
 ### References
