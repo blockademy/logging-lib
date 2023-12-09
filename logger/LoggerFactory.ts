@@ -1,6 +1,7 @@
-import { Logger as PinoLoggerImpl, pino } from 'pino';
+import { Level, Logger as PinoLoggerImpl, pino } from 'pino';
 import { pinoLambdaDestination } from 'pino-lambda';
 import { pinoCaller } from 'pino-caller';
+import pretty from 'pino-pretty'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface Logger {
@@ -14,6 +15,7 @@ export interface Logger {
     warn<T>(obj?: T, msg?: string, ...args: any[]): void;
     error(msg?: string, ...args: any[]): void;
     error<T>(obj?: T, msg?: string, ...args: any[]): void;
+    flush(): void;
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -39,20 +41,15 @@ class PinoLogger implements Logger {
     error<T>(obj?: T, msg?: string, ...args: any[]): void {
         this.pinoLogger.error(obj, msg, ...args);
     }
+
+    flush = () => this.pinoLogger.flush();
 }
 
 export class LoggerFactory {
-    private static defaultLevel = process.env['LOG_LEVEL'] || 'info';
+    private static defaultLevel = (process.env['LOG_LEVEL'] || 'info') as Level;
     private static devMode = process.env.NODE_ENV === 'development';
     private static enablePretty = process.env['LOG_TRANSPORT'] === 'pretty' || this.devMode;
     private static enableCaller = !!process.env['LOG_CALLER'] || this.devMode;
-
-    private static prettyTransportOptions = {
-        target: 'pino-pretty',
-        options: {
-            colorize: true,
-        },
-    };
 
     private static _rootLogger: PinoLogger = this.createRoot();
     static rootLogger: Logger = this._rootLogger;
@@ -64,26 +61,16 @@ export class LoggerFactory {
     }
 
     private static createRoot(): PinoLogger {
-        let logger: PinoLogger;
         if (this.devMode || this.enablePretty) {
-            // aka dev-mode - no lambda expected - just pretty print to stdout
-            let pinoLogger = pino({
-                level: this.defaultLevel,
-                transport: LoggerFactory.prettyTransportOptions,
-            });
-
-            // we will never want to enable caller for non-dev
-            if (this.enableCaller) {
-                pinoLogger = pinoCaller(pinoLogger, { relativeTo: process.cwd(), stackAdjustment: 1 });
-            }
-
-            logger = new PinoLogger(pinoLogger);
+            const pinoLogger = pino(pretty({
+                minimumLevel: this.defaultLevel,
+                colorize: true,
+                sync: true,
+            }));
+            return new PinoLogger(this.enableCaller ? pinoCaller(pinoLogger, { relativeTo: process.cwd(), stackAdjustment: 1 }) : pinoLogger);
         } else {
-            // aka prod-mode - expected lambda runtime. Traces requests and format specifics for CloudWatch
-            logger = new PinoLogger(pino({ level: this.defaultLevel }, pinoLambdaDestination()));
+            return new PinoLogger(pino({ level: this.defaultLevel }, pinoLambdaDestination()));
         }
-
-        return logger;
     }
 
     static create(name: string): Logger {
