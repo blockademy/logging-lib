@@ -27,8 +27,12 @@ describe('LoggerFactory', () => {
         logger.info('test');
 
         const fileContent = await readFile(outputFile, 'utf-8');
-        expect(fileContent).toContain('test');
-        expect(fileContent).toContain('INFO');
+        console.log(fileContent);
+
+        // pretty format has ansi colour codes and formatted segments
+        const regex = /\[[0-9:.]{12}] \x1b\[32mINFO\x1b\[39m \(test-pretty\/[0-9]+\): \x1b\[36mtest\x1b\[39m/;
+
+        expect(fileContent.trim()).toMatch(regex);
     })
 
     it('should log stuff with redaction', async () => {
@@ -44,24 +48,28 @@ describe('LoggerFactory', () => {
         });
 
         logger.info({
-            key: 'will be redacted',
+            key: 'redacted1',
             path: {
-                to: {key: 'sensitive', another: 'thing'}
+                to: {key: 'redacted2', another: 'logged1'}
             },
             stuff: {
                 thats: [
-                    {secret: 'will be redacted', logme: 'will be logged'},
-                    {secret: 'also redacted', logme: 'will be logged'}
+                    {secret: 'redacted3', logme: 'logged2'},
+                    {secret: 'redacted4', logme: 'logged3'}
                 ]
             }
         })
 
         const fileContent = await readFile(outputFile, 'utf-8');
+        console.log(fileContent);
 
-        expect(fileContent).toContain('will be logged');
-        expect(fileContent).not.toContain('will be redacted');
-        expect(fileContent).not.toContain('sensitive');
-        expect(fileContent).not.toContain('also redacted');
+        expect(fileContent).toContain('logged1');
+        expect(fileContent).toContain('logged2');
+        expect(fileContent).toContain('logged3');
+        expect(fileContent).not.toContain('redacted1');
+        expect(fileContent).not.toContain('redacted2');
+        expect(fileContent).not.toContain('redacted3');
+        expect(fileContent).not.toContain('redacted4');
     })
 
 });
