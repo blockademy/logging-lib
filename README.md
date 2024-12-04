@@ -32,13 +32,25 @@ import { LoggerFactory } from "@yopdev/logging";
 2. Create a new `Logger` instance (ideally private to the component you'll be logging from)
 
 ```typescript
-    private logger = LoggerFactory.create(Config.name);
+    logger = LoggerFactory.create(Config.name);
 ```
 
 3. Log stuff
 
 ```typescript
-this.logger.info("Logging stuff will take you places, %s", name);
+    this.logger.info("Logging stuff will take you places, %s", name);
+```
+
+4. Redact sensitive data
+
+```typescript
+    logger = LoggerFactory.create(Module.name, {redact: ['key1', 'key2']});
+```
+
+5. Change the logging level for the new child logger
+
+```typescript
+    logger = LoggerFactory.create(Module.name, { level: 'info' });
 ```
 
 ## Settings via env-vars
@@ -46,6 +58,7 @@ this.logger.info("Logging stuff will take you places, %s", name);
 - `LOG_LEVEL`: Sets the root logging level (`debug`, `info`, `warn`, `error`)
 - `LOG_TRANSPORT`: `pretty` is only supported for now. Uses the stdOut and colorizes output with a simple formatter. Enabled when running with `NODE_ENV === development`
 - `LOG_CALLER`: Enables caller information in logs. Also enabled when running with `NODE_ENV === development`.
+- `LOG_DESTINATION`: Changes the destination for the logs. Defaults to `stdout`. The value should be a path to a file. The file will be created if it doesn't exist.
 
 **WARNING:**: There are no settings available to alter how we log in production. Prod-mode is our default logging strategy. Don't add these settings to production or pre-production environments as they will incurr in additional costs.
 
@@ -64,7 +77,7 @@ this.logger.info("Logging stuff will take you places, %s", name);
   - Use WARN for potential errors, like things that you want to inform to the operations team but aren't necesarily errors.
   - Use ERROR for real errors. Make sure you're sending the Error object first! No need to use templates/interpolation, keep it clean.
 
-- Send the right parameters the the logger (see Logging methods)
+- Send the right parameters to the logger (see Logging methods)
 
 ## Logging methods
 
