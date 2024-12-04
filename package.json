@@ -5,7 +5,8 @@
     "compile": "tsc",
     "clean": "rm -rf dist",
     "predistclean": "npm run clean",
-    "distclean": "rm -rf node_modules"
+    "distclean": "rm -rf node_modules",
+    "test": "jest"
   },
   "dependencies": {
     "pino": "9.5.0",
