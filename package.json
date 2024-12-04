@@ -8,10 +8,10 @@
     "distclean": "rm -rf node_modules"
   },
   "dependencies": {
-    "pino": "8.11.0",
+    "pino": "9.5.0",
     "pino-caller": "3.4.0",
-    "pino-lambda": "4.1.0",
-    "pino-pretty": "10.0.0"
+    "pino-lambda": "4.4.1",
+    "pino-pretty": "13.0.0"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,12 @@
   "types": "dist/index.d.ts",
   "devDependencies": {
     "@types/node": "^20.6.3",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "ts-node": "^10.9.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.0.5",
+    "@types/jest": "^29.5.4",
+    "@types/pino": "^7.0.5",
+    "@types/pino-pretty": "^5.0.0"
   }
 }

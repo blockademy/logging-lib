@@ -1,7 +1,7 @@
 import { Level, Logger as PinoLoggerImpl, pino } from 'pino';
 import { pinoLambdaDestination } from 'pino-lambda';
 import { pinoCaller } from 'pino-caller';
-import pretty from 'pino-pretty'
+import * as pretty from 'pino-pretty'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface Logger {
@@ -45,11 +45,17 @@ class PinoLogger implements Logger {
     flush = () => this.pinoLogger.flush();
 }
 
+export type LoggerOptions = {
+    level?: Level;
+    redact?: string[];
+}
+
 export class LoggerFactory {
     private static defaultLevel = (process.env['LOG_LEVEL'] || 'info') as Level;
     private static devMode = process.env.NODE_ENV === 'development';
     private static enablePretty = process.env['LOG_TRANSPORT'] === 'pretty' || this.devMode;
     private static enableCaller = !!process.env['LOG_CALLER'] || this.devMode;
+    private static logDestination = process.env['LOG_DESTINATION'];
 
     private static _rootLogger: PinoLogger = this.createRoot();
     static rootLogger: Logger = this._rootLogger;
@@ -66,6 +72,7 @@ export class LoggerFactory {
                 minimumLevel: this.defaultLevel,
                 colorize: true,
                 sync: true,
+                destination: this.logDestination,
             }));
             return new PinoLogger(this.enableCaller ? pinoCaller(pinoLogger, { relativeTo: process.cwd(), stackAdjustment: 1 }) : pinoLogger);
         } else {
@@ -73,15 +80,22 @@ export class LoggerFactory {
         }
     }
 
-    static create(name: string): Logger {
-        const level = LoggerFactory.levelMappings.find((e) => e.name === name)?.level || LoggerFactory.defaultLevel;
+    static create(name: string, opts?: LoggerOptions): Logger {
+        const level = opts?.level || LoggerFactory.levelMappings.find((e) => e.name === name)?.level || LoggerFactory.defaultLevel;
+
+        const redactOpts = opts?.redact ? {
+            paths: opts?.redact,
+            remove: true,
+        } : undefined;
 
         const pinoChildLogger = this._rootLogger.pinoLogger.child(
             {
                 name: name,
+
             },
             {
                 level: level,
+                redact: redactOpts,
             },
         );
 
