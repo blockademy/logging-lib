@@ -6,39 +6,38 @@ import * as pretty from 'pino-pretty'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface Logger {
     trace(msg?: string, ...args: any[]): void;
-    trace<T>(obj?: T, msg?: string, ...args: any[]): void;
+    trace(obj?: unknown, msg?: string, ...args: any[]): void;
     debug(msg?: string, ...args: any[]): void;
-    debug<T>(obj?: T, msg?: string, ...args: any[]): void;
+    debug(obj?: unknown, msg?: string, ...args: any[]): void;
     info(msg?: string, ...args: any[]): void;
-    info<T>(obj?: T, msg?: string, ...args: any[]): void;
+    info(obj?: unknown, msg?: string, ...args: any[]): void;
     warn(msg?: string, ...args: any[]): void;
-    warn<T>(obj?: T, msg?: string, ...args: any[]): void;
+    warn(obj?: unknown, msg?: string, ...args: any[]): void;
     error(msg?: string, ...args: any[]): void;
-    error<T>(obj?: T, msg?: string, ...args: any[]): void;
+    error(obj?: unknown, msg?: string, ...args: any[]): void;
     flush(): void;
 }
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 class PinoLogger implements Logger {
     constructor(readonly pinoLogger: PinoLoggerImpl) { }
 
-    trace<T>(obj?: T, msg?: string, ...args: any[]): void {
+    trace(obj?: unknown, msg?: string, ...args: any[]): void {
         this.pinoLogger.trace(obj, msg, ...args);
     }
 
-    debug<T>(obj?: T, msg?: string, ...args: any[]): void {
+    debug(obj?: unknown, msg?: string, ...args: any[]): void {
         this.pinoLogger.debug(obj, msg, ...args);
     }
 
-    info<T>(obj?: T, msg?: string, ...args: any[]): void {
+    info(obj?: unknown, msg?: string, ...args: any[]): void {
         this.pinoLogger.info(obj, msg, ...args);
     }
 
-    warn<T>(obj?: T, msg?: string, ...args: any[]): void {
+    warn(obj?: unknown, msg?: string, ...args: any[]): void {
         this.pinoLogger.warn(obj, msg, ...args);
     }
 
-    error<T>(obj?: T, msg?: string, ...args: any[]): void {
+    error(obj?: unknown, msg?: string, ...args: any[]): void {
         this.pinoLogger.error(obj, msg, ...args);
     }
 
