@@ -1,6 +1,6 @@
 {
   "name": "@yopdev/logging",
-  "version": "0.0.3",
+  "version": "0.0.4.alpha-1",
   "scripts": {
     "compile": "tsc",
     "clean": "rm -rf dist",
