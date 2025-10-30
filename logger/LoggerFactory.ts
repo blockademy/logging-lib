@@ -1,7 +1,7 @@
 import { Level, Logger as PinoLoggerImpl, pino } from 'pino';
 import { pinoLambdaDestination } from 'pino-lambda';
 import { pinoCaller } from 'pino-caller';
-import * as pretty from 'pino-pretty'
+import { PinoPretty as pretty } from 'pino-pretty'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface Logger {
