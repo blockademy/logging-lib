@@ -146,7 +146,7 @@ describe('LoggerFactory', () => {
         loggerChild.info('logger-child-is-here');
 
         // now alter the parent level, see if it affects the child level
-        // NOTE we know the parent is 'logging' because it will lookup this library package.json name
+        // NOTE we know the parent is 'logging' because it will look up this library package.json name
         module.LoggerFactory.setLevel('logging/test-child', 'warn');
         loggerChild.info('logger-child-not-here');
 
