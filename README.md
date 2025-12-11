@@ -32,25 +32,25 @@ import { LoggerFactory } from "@yopdev/logging";
 2. Create a new `Logger` instance (ideally private to the component you'll be logging from)
 
 ```typescript
-    logger = LoggerFactory.create(Config.name);
+logger = LoggerFactory.create(Config.name);
 ```
 
 3. Log stuff
 
 ```typescript
-    this.logger.info("Logging stuff will take you places, %s", name);
+this.logger.info("Logging stuff will take you places, %s", name);
 ```
 
 4. Redact sensitive data
 
 ```typescript
-    logger = LoggerFactory.create(Module.name, {redact: ['key1', 'key2']});
+logger = LoggerFactory.create(Module.name, { redact: ["key1", "key2"] });
 ```
 
 5. Change the logging level for the new child logger
 
 ```typescript
-    logger = LoggerFactory.create(Module.name, { level: 'info' });
+logger = LoggerFactory.create(Module.name, { level: "info" });
 ```
 
 ## LoggerFactory methods
@@ -81,12 +81,14 @@ Works on DEV mode only, to change the logging level for a logger by name at runt
 - Don't send unpredictable contents to the logger as objects. DON'T DO THIS:
 
 ```typescript
-    const someObject: SomeTypeThatMayHoldLotsOfData = {}
-    this.logger.info(someObject, "I'm logging this at the info level and serializing a huge object...");
+const someObject: SomeTypeThatMayHoldLotsOfData = {};
+this.logger.info(
+  someObject,
+  "I'm logging this at the info level and serializing a huge object...",
+);
 ```
 
 - Choose the proper logging level.
-
   - Don't do INFO unless you're certain it's something you want logged every time in production.
   - Use WARN for potential errors, like things that you want to inform to the operations team but aren't necesarily errors.
   - Use ERROR for real errors. Make sure you're sending the Error object first! No need to use templates/interpolation, keep it clean.

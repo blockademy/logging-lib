@@ -1,2 +1,2 @@
-export * from './logger/LoggerFactory';
-export * from './logger/LambdaLogger';
+export * from "./logger/LoggerFactory";
+export * from "./logger/LambdaLogger";
