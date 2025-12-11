@@ -53,6 +53,20 @@ import { LoggerFactory } from "@yopdev/logging";
     logger = LoggerFactory.create(Module.name, { level: 'info' });
 ```
 
+## LoggerFactory methods
+
+- `create(name: string, options?: { level?: string, redact?: string[] }): Logger`
+
+To create a new logger instance.
+
+- `addLevelMapping(name: string, level: string): void`
+
+On initial setup, works on DEV mode only, to set the default logging level for a logger by name.
+
+- `setLevel(name: string, level: string): void`
+
+Works on DEV mode only, to change the logging level for a logger by name at runtime.
+
 ## Settings via env-vars
 
 - `LOG_LEVEL`: Sets the root logging level (`debug`, `info`, `warn`, `error`)
@@ -67,7 +81,7 @@ import { LoggerFactory } from "@yopdev/logging";
 - Don't send unpredictable contents to the logger as objects. DON'T DO THIS:
 
 ```typescript
-    const someObject: SomeTypeThatMayHoldLotsOfData = ...
+    const someObject: SomeTypeThatMayHoldLotsOfData = {}
     this.logger.info(someObject, "I'm logging this at the info level and serializing a huge object...");
 ```
 
@@ -83,7 +97,7 @@ import { LoggerFactory } from "@yopdev/logging";
 
 ### Templated string
 
-Will log a string from a templated string (aka string.format).
+Will log a string from a templated string (aka string#format).
 
 ```typescript
 this.logger.info("a string %s, a number %d, an object %O", "one", 2, {
