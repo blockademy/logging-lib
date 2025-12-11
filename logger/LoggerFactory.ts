@@ -1,4 +1,4 @@
-import { Level, Logger as PinoLoggerImpl, pino } from 'pino';
+import {destination, Level, Logger as PinoLoggerImpl, pino} from 'pino';
 import { pinoLambdaDestination } from 'pino-lambda';
 import { pinoCaller } from 'pino-caller';
 import { PinoPretty as pretty } from 'pino-pretty'
@@ -80,7 +80,7 @@ class DevLoggerManager implements LoggerManager {
         }
     }
 
-    addLevelMapping(name: string, level: pino.Level): void {
+    addLevelMapping(name: string, level: Level): void {
         this.levelMappings.push({ name, level });
         this.setLevel(name, level);
     }
@@ -98,9 +98,9 @@ class DevLoggerManager implements LoggerManager {
                 sync: true,
                 destination: this.logDestination
             });
-            pinoLogger = pino(transport || pino.destination(this.logDestination));
+            pinoLogger = pino(transport || destination(this.logDestination));
         } else {
-            pinoLogger = pino({ name: name }, pino.destination(this.logDestination));
+            pinoLogger = pino({ name: name }, destination(this.logDestination));
         }
 
         return new PinoLogger(this.enableCaller ? pinoCaller(pinoLogger, { relativeTo: process.cwd(), stackAdjustment: 1 }) : pinoLogger);
