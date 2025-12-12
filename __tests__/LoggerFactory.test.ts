@@ -6,7 +6,7 @@ import * as path from "node:path";
 import * as os from "node:os";
 
 describe("LoggerFactory", () => {
-  const oldEnv = process.env;
+  const oldEnv = { ...process.env };
 
   const tempDir: string = mkdtempSync(
     path.join(os.tmpdir(), "LoggerFactory-test-"),
@@ -29,7 +29,6 @@ describe("LoggerFactory", () => {
     logger.info("test");
 
     const fileContent = await readFile(outputFile, "utf-8");
-    console.log(fileContent);
 
     // pretty format has ansi colour codes and formatted segments
     const regex =
@@ -70,7 +69,6 @@ describe("LoggerFactory", () => {
     });
 
     const fileContent = await readFile(outputFile, "utf-8");
-    console.log(fileContent);
 
     expect(fileContent).toContain("logged1");
     expect(fileContent).toContain("logged2");
@@ -98,7 +96,6 @@ describe("LoggerFactory", () => {
     logger2.info("logger2");
 
     const fileContent = await readFile(outputFile, "utf-8");
-    console.log(fileContent);
 
     // pretty format has ansi colour codes and formatted segments
     const regex =
@@ -130,7 +127,6 @@ describe("LoggerFactory", () => {
     logger2.info("second-logger2");
 
     const fileContent = await readFile(outputFile, "utf-8");
-    console.log(fileContent);
 
     const lines = fileContent.trim().split("\n");
     // 2 lines - first-logger1 and second-logger2
@@ -166,7 +162,6 @@ describe("LoggerFactory", () => {
     loggerChild.info("logger-child-not-here");
 
     const fileContent = await readFile(outputFile, "utf-8");
-    console.log(fileContent);
 
     const lines = fileContent.trim().split("\n");
     expect(lines).toHaveLength(1);
