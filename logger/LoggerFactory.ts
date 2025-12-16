@@ -56,7 +56,7 @@ export interface LoggerManager {
     createRoot(name?: string): PinoLogger;
     addLevelMapping(name: string, level: Level | string): void;
     setLevel(name: string, level: Level | string): void;
-    setChildrenLevel(name: string, level: Level | string): void;
+    setChildrenLevel(name: string, level: Level | string): number;
 }
 
 export class DevLoggerManager implements LoggerManager {
@@ -179,7 +179,7 @@ export class DevLoggerManager implements LoggerManager {
         return newLogger;
     }
 
-    getOrCreatePackageLogger(): { logger: PinoLogger; name: string } | undefined {
+    private getOrCreatePackageLogger(): { logger: PinoLogger; name: string } | undefined {
         let packageName = getLoggerPackage();
         if (packageName?.startsWith('@') && packageName.includes('/')) {
             packageName = packageName.substring(packageName.indexOf('/') + 1);
@@ -213,8 +213,9 @@ export class LiveLoggerManager implements LoggerManager {
         this.rootLogger.warn('Unexpected LoggerFactory setting - addLevelMapping is not supported for LIVE loggers');
     }
 
-    setChildrenLevel(): void {
+    setChildrenLevel(): number {
         this.rootLogger.warn('Unexpected LoggerFactory setting - setLevelCascade is not supported for LIVE loggers');
+        return -1;
     }
 
     createRoot(): PinoLogger {
