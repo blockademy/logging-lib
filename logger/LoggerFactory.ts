@@ -267,6 +267,9 @@ export class LoggerFactory {
     }
 
     static setLoggerManager(m: LoggerManager): void {
+        if (process.env.NODE_ENV !== 'development') {
+            throw new Error('LoggerFactory.setLoggerManager is only allowed in development mode');
+        }
         LoggerFactory.manager = m;
     }
 
