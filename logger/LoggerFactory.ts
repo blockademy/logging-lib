@@ -74,14 +74,14 @@ export class DevLoggerManager implements LoggerManager {
         this.rootLogger = this.createRoot(DevLoggerManager.ROOT_LOGGER_NAME);
     }
 
-    setLevel(name: string, level: string): void {
+    setLevel(name: string, level: Level | string): void {
         const logger = this.findLogger(name);
         if (logger) {
             logger.pinoLogger.level = level;
         }
     }
 
-    setChildrenLevel(name: string, level: string): number {
+    setChildrenLevel(name: string, level: Level | string): number {
         const prefix = name.endsWith('/') ? name : `${name}/`;
         const loggers = [...this.loggers.entries()].filter(([lgName]) => lgName.startsWith(prefix));
         loggers.forEach(([, lg]) => {
@@ -90,7 +90,7 @@ export class DevLoggerManager implements LoggerManager {
         return loggers.length;
     }
 
-    addLevelMapping(name: string, level: Level): void {
+    addLevelMapping(name: string, level: Level | string): void {
         this.levelMappings.push({ name, level });
         if (this.isPrefixMatch(name)) {
             this.setChildrenLevel(name, level);
@@ -116,7 +116,7 @@ export class DevLoggerManager implements LoggerManager {
                 sync: true,
                 destination: this.logDestination,
             });
-            pinoLogger = pino(transport || destination(this.logDestination));
+            pinoLogger = pino(transport);
         } else {
             pinoLogger = pino({ name: name }, destination(this.logDestination));
         }
@@ -150,9 +150,12 @@ export class DevLoggerManager implements LoggerManager {
     create(name: string, opts?: LoggerOptions): Logger {
         let _rootLogger = this.rootLogger;
         if (this.enablePackagePrefix) {
-            const { logger: packageLogger, name: packageLoggerName } = this.getOrCreatePackageLogger();
-            name = `${packageLoggerName}/${name}`;
-            _rootLogger = packageLogger;
+            const packageLoggerAndName = this.getOrCreatePackageLogger();
+            if (packageLoggerAndName) {
+                const { logger: packageLogger, name: packageLoggerName } = packageLoggerAndName;
+                name = `${packageLoggerName}/${name}`;
+                _rootLogger = packageLogger;
+            }
         }
 
         const level = opts?.level || this.findMappingLevel(name) || this.defaultLevel;
@@ -186,7 +189,6 @@ export class DevLoggerManager implements LoggerManager {
             packageName = packageName.replaceAll('/', '_');
         }
 
-        // if we can't find a package name, just use the root logger
         if (!packageName) return;
 
         // see if we need to create a new logger already
