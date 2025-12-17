@@ -77,6 +77,7 @@ describe('LoggerFactory', () => {
         const regex =
             /\[[0-9:.]{12}] \x1b\[32mINFO\x1b\[39m \(logging\/test-mapping1\/[0-9]+\): \x1b\[36mlogger1\x1b\[39m/;
 
+        expect(logs.trim().split('\n')).toHaveLength(1);
         expect(logs.trim()).toMatch(regex);
     });
 
