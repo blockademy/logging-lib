@@ -51,7 +51,6 @@ export type LoggerOptions = {
 };
 
 export interface LoggerManager {
-    rootLogger: Logger;
     create(name: string, opts?: LoggerOptions): Logger;
     createRoot(name?: string): PinoLogger;
     addLevelMapping(name: string, level: Level | string): void;
@@ -61,7 +60,7 @@ export interface LoggerManager {
 
 export class DevLoggerManager implements LoggerManager {
     static readonly ROOT_LOGGER_NAME = '__ROOT__';
-    readonly rootLogger: PinoLogger;
+    private readonly rootLogger: PinoLogger;
     private levelMappings: { name: string; level: string }[] = [];
     private loggers: Map<string, PinoLogger> = new Map();
     constructor(
