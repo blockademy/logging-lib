@@ -16,6 +16,7 @@ function getCallerFile(): string | undefined {
     const callerParent = stack.findIndex(
         (e) =>
             e.getFunctionName() === 'create' &&
+            e.getFileName() &&
             (e.getFileName().endsWith('LoggerFactory.ts') || e.getFileName().endsWith('LoggerFactory.js')),
     );
     const caller = stack[callerParent - 1];

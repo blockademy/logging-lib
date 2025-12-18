@@ -3,6 +3,9 @@
         "module": "commonjs",
         "declaration": true,
         "outDir": "dist",
-        "target": "ES2022"
+        "target": "ES2022",
+        "sourceMap": true,
+        "noUnusedLocals": true,
+        "allowUnreachableCode": false
     }
 }
