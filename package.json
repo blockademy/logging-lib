@@ -1,6 +1,6 @@
 {
     "name": "@yopdev/logging",
-    "version": "0.0.7-rc2",
+    "version": "0.0.7",
     "description": "A simple pino wrapper for Node.js",
     "scripts": {
         "compile": "tsc",
