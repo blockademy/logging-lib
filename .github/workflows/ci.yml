@@ -11,12 +11,18 @@ jobs:
         name: Build and Test
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
             - name: Use Node.js 20.x
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v6
               with:
                   node-version: 20
                   cache: 'npm'
+            - name: Upgrade npm
+              run: npm install -g npm@latest
+            - name: Verify versions
+              run: |
+                  node -v
+                  npm -v
             - run: npm ci
             - run: npm run compile
             - run: npm test
@@ -24,9 +30,9 @@ jobs:
         name: Prettier
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
             - name: Use Node.js 20.x
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v6
               with:
                   node-version: 20
                   cache: 'npm'
