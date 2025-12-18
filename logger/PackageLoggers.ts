@@ -13,11 +13,14 @@ function getCallerFile(): string | undefined {
     stack.reverse();
 
     // find the stack line that calls `LoggerFactory.create`
-    const callerParent = stack.findIndex(
-        (e) =>
+    const callerParent = stack.findIndex((e) => {
+        const fileName = e.getFileName();
+        return (
             e.getFunctionName() === 'create' &&
-            (e.getFileName().endsWith('LoggerFactory.ts') || e.getFileName().endsWith('LoggerFactory.js')),
-    );
+            fileName !== undefined &&
+            (fileName.endsWith('LoggerFactory.ts') || fileName.endsWith('LoggerFactory.js'))
+        );
+    });
     const caller = stack[callerParent - 1];
     if (!caller) return;
 
