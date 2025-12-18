@@ -74,14 +74,19 @@ export class DevLoggerManager implements LoggerManager {
     }
 
     setLevel(name: string, level: Level | string): void {
-        const logger = this.findLogger(name);
-        if (logger) {
-            logger.pinoLogger.level = level;
+        if (this.isPrefixMatch(name)) {
+            this.setChildrenLevel(name, level);
+        } else {
+            const logger = this.findLogger(name);
+            if (logger) {
+                logger.pinoLogger.level = level;
+            }
         }
     }
 
+    // TODO: watch out performance on large number of loggers
     setChildrenLevel(name: string, level: Level | string): number {
-        const prefix = name.endsWith('/') ? name : `${name}/`;
+        const prefix = this.normalizePrefixMatch(name);
         const loggers = [...this.loggers.entries()].filter(([lgName]) => lgName.startsWith(prefix));
         loggers.forEach(([, lg]) => {
             lg.pinoLogger.level = level;
@@ -100,6 +105,10 @@ export class DevLoggerManager implements LoggerManager {
 
     private isPrefixMatch(name: string): boolean {
         return name.endsWith('/*');
+    }
+
+    private normalizePrefixMatch(name: string): string {
+        return name.endsWith('/*') ? name.slice(0, -1) : name.endsWith('/') ? name : `${name}/`;
     }
 
     private findLogger(name: string): PinoLogger | undefined {
