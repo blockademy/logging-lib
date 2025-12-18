@@ -6,6 +6,7 @@
         "target": "ES2022",
         "sourceMap": true,
         "noUnusedLocals": true,
-        "allowUnreachableCode": false
+        "allowUnreachableCode": false,
+        "strict": true
     }
 }
