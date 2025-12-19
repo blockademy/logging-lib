@@ -39,4 +39,5 @@ jobs:
                   node -v
                   npm -v
             - run: npm ci
+            - run: npm run compile
             - run: npm publish
