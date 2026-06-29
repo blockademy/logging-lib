@@ -1,10 +1,50 @@
-import { beforeEach, describe, it, jest } from '@jest/globals';
+import { beforeEach, describe, it, jest, expect } from '@jest/globals';
 
 import { mkdtempSync } from 'fs';
 import { readFile } from 'node:fs/promises';
 import * as path from 'node:path';
 import * as os from 'node:os';
-import { DevLoggerManager } from '../logger/LoggerFactory';
+import { CloudwatchDedupedFormatter, DevLoggerManager } from '../logger/LoggerFactory';
+
+describe('CloudwatchDedupedFormatter', () => {
+    const formatter = new CloudwatchDedupedFormatter();
+
+    it('keeps msg in the text column but omits it from the JSON payload', () => {
+        const output = formatter.format({
+            awsRequestId: 'req-123',
+            level: 20,
+            msg: 'event: {"huge":"payload"}',
+            name: 'OnCertificateChanged',
+            foo: 'bar',
+        } as never);
+
+        const fields = output.split('\t');
+        const json = JSON.parse(fields[fields.length - 1]);
+
+        // text column still carries the message (4th field: time, reqId, LEVEL, msg)
+        expect(fields[1]).toBe('req-123');
+        expect(fields[2]).toBe('DEBUG');
+        expect(fields[3]).toBe('event: {"huge":"payload"}');
+
+        // ...but it is no longer duplicated inside the JSON payload
+        expect(json.msg).toBeUndefined();
+
+        // every other field is preserved
+        expect(json.name).toBe('OnCertificateChanged');
+        expect(json.foo).toBe('bar');
+        expect(json.level).toBe(20);
+    });
+
+    it('omits the requestId tab when there is no awsRequestId', () => {
+        const output = formatter.format({ level: 30, msg: 'hello' } as never);
+        const fields = output.split('\t');
+
+        // time, LEVEL, msg, json  -> no requestId field
+        expect(fields[1]).toBe('INFO');
+        expect(fields[2]).toBe('hello');
+        expect(JSON.parse(fields[3]).msg).toBeUndefined();
+    });
+});
 
 describe('LoggerFactory', () => {
     const oldEnv = { ...process.env };

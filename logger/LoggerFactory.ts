@@ -1,8 +1,38 @@
 import { destination, Level, Logger as PinoLoggerImpl, pino } from 'pino';
-import { pinoLambdaDestination } from 'pino-lambda';
+import { pinoLambdaDestination, ILogFormatter, LogData } from 'pino-lambda';
 import { pinoCaller } from 'pino-caller';
 import { PinoPretty as pretty } from 'pino-pretty';
 import { getLoggerPackage } from './PackageLoggers';
+
+/**
+ * Same line layout as pino-lambda's default CloudwatchLogFormatter
+ * (`<time> <requestId> <LEVEL> <msg> <json>`) but omitting `msg` from the
+ * trailing JSON payload, since it is already present in the text column.
+ * This avoids logging the (often large) message twice on every log line.
+ */
+export class CloudwatchDedupedFormatter implements ILogFormatter {
+    private static readonly LEVEL_LABELS: Record<number, string> = {
+        10: 'TRACE',
+        20: 'DEBUG',
+        30: 'INFO',
+        40: 'WARN',
+        50: 'ERROR',
+        60: 'FATAL',
+    };
+
+    private static formatLevel(level: string | number): string {
+        return typeof level === 'number'
+            ? (CloudwatchDedupedFormatter.LEVEL_LABELS[level] ?? String(level))
+            : String(level).toUpperCase();
+    }
+
+    format(data: LogData): string {
+        const { msg, ...rest } = data as LogData & Record<string, unknown>;
+        const time = new Date().toISOString();
+        const levelTag = CloudwatchDedupedFormatter.formatLevel(data.level);
+        return `${time}${data.awsRequestId ? `\t${data.awsRequestId}` : ''}\t${levelTag}\t${msg ?? ''}\t${JSON.stringify(rest)}`;
+    }
+}
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface Logger {
@@ -229,7 +259,9 @@ export class LiveLoggerManager implements LoggerManager {
     }
 
     createRoot(): PinoLogger {
-        return new PinoLogger(pino({ level: this.defaultLevel }, pinoLambdaDestination()));
+        return new PinoLogger(
+            pino({ level: this.defaultLevel }, pinoLambdaDestination({ formatter: new CloudwatchDedupedFormatter() })),
+        );
     }
 
     create(name: string, opts?: LoggerOptions): Logger {
