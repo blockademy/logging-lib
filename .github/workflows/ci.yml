@@ -12,10 +12,10 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v6
-            - name: Use Node.js 20.x
+            - name: Use Node.js 22.x
               uses: actions/setup-node@v6
               with:
-                  node-version: 20
+                  node-version: 22
                   cache: 'npm'
             - name: Upgrade npm
               run: npm install -g npm@latest
@@ -31,10 +31,10 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v6
-            - name: Use Node.js 20.x
+            - name: Use Node.js 22.x
               uses: actions/setup-node@v6
               with:
-                  node-version: 20
+                  node-version: 22
                   cache: 'npm'
             - run: npm ci
             - run: npm run prettier
